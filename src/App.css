@@ -1,0 +1,768 @@
+/* src/App.css */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.app-layout {
+  display: flex;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.navbar {
+  background-color: #2c3e50;
+  width: 220px;
+  min-width: 220px;
+  padding: 25px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.navbar-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-title {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 0 12px;
+}
+
+.navbar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.navbar a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-logout-mobile {
+  display: none;
+}
+
+.navbar-logout-desktop {
+  display: block;
+  margin-top: auto;
+}
+
+.content-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 60px; /* espaço para o rodapé fixo */
+}
+
+.container {
+  flex: 1;
+  min-height: 0;
+  max-width: 700px;
+  max-height: calc(100dvh - 140px); /* ocupa quase toda a altura da tela */
+  width: 100%;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+h2 {
+  color: #2c3e50;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input,
+select,
+button {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+button {
+  background-color: #25d366;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #1ebe5d;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  gap: 10px;
+}
+
+/* ===== CALENDÁRIO ===== */
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.btn-primary {
+  background-color: #25d366;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 5px 0;
+}
+
+.calendar-day {
+  position: relative;
+  min-height: 60px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  padding: 8px;
+  cursor: pointer;
+  background-color: #fafafa;
+}
+
+.calendar-day:hover {
+  background-color: #e8f8ef;
+}
+
+.calendar-day.empty {
+  cursor: default;
+  background-color: transparent;
+  border: none;
+}
+
+.day-number {
+  font-weight: bold;
+}
+
+.day-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #25d366;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+/* ===== MODAIS ===== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.modal-content h3 {
+  margin: 0 0 5px 0;
+  font-size: 20px;
+  color: #2c3e50;
+}
+
+.modal-small {
+  max-width: 400px;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.modal-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-content li {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.modal-content li span {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 14px;
+  font-size: 15px;
+}
+
+.btn-secondary {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #ccc;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+/* ===== BOTÕES DE ÍCONE (editar, excluir, whatsapp, comentários) ===== */
+
+.icon-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  flex: none;
+}
+
+.icon-btn-edit {
+  background-color: #f1c40f;
+}
+
+.icon-btn-edit:hover {
+  background-color: #d4ac0d;
+}
+
+.icon-btn-delete {
+  background-color: #e74c3c;
+}
+
+.icon-btn-delete:hover {
+  background-color: #c0392b;
+}
+
+.icon-btn-whatsapp {
+  background-color: #25d366;
+  text-decoration: none;
+}
+
+.icon-btn-whatsapp:hover {
+  background-color: #1ebe5d;
+}
+
+.icon-btn-comments {
+  background-color: #3498db;
+}
+
+.icon-btn-comments:hover {
+  background-color: #2980b9;
+}
+
+/* ===== NAVBAR LOGOUT (base) ===== */
+
+.navbar-logout {
+  background-color: transparent;
+  border: 1px solid white;
+  color: white;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.navbar-logout:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== LOGIN ===== */
+
+.login-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000; /* acima do rodapé (500/1000), da navbar e do card */
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 380px;
+}
+
+.login-card h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-error {
+  color: #e74c3c;
+  font-size: 14px;
+  text-align: center;
+  margin: 0;
+}
+
+.navbar-logo {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 20px auto;
+}
+
+/* ===== FOOTER ===== */
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 220px;
+  right: 0;
+
+  background-color: #2c3e50;
+  color: white;
+
+  padding: 12px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+  flex-wrap: wrap;
+
+  font-size: 14px;
+  z-index: 500;
+}
+
+.footer-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-datetime {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 90px;
+}
+
+.footer-time {
+  font-size: 18px;
+  font-weight: bold;
+  color: #25d366;
+}
+
+.footer-date {
+  font-size: 12px;
+  color: #bbb;
+}
+
+.footer-weather {
+  font-weight: bold;
+}
+
+.footer-carousel {
+  flex: 1;
+  justify-content: center;
+  min-width: 200px;
+  overflow: hidden;
+}
+
+.footer-carousel-item {
+  animation: fadeSlide 0.5s ease;
+  font-weight: bold;
+  color: #f1c40f;
+}
+
+.footer-weather-icon {
+  font-size: 20px;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVO MOBILE ===== */
+
+@media (max-width: 600px) {
+  .app-layout {
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .navbar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    position: static;
+    padding: 15px;
+    gap: 12px;
+
+    flex-shrink: 0;
+  }
+
+  .navbar-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .navbar-logo {
+  display: block;
+  max-width: 50%;
+  max-height: 60%;
+  margin: auto;
+}
+
+  .navbar-links {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .navbar a {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .navbar-logout-desktop {
+    display: none;
+  }
+
+  .navbar-logout-mobile {
+    display: block;
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+    align-items: center;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 12px;
+    padding: 20px 16px;
+    margin: 0;
+  }
+
+  .modal-content li {
+    padding: 12px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+
+  .calendar-day {
+    min-height: 45px;
+    padding: 4px;
+    font-size: 13px;
+  }
+
+  .day-badge {
+    font-size: 9px;
+    padding: 1px 5px;
+  }
+
+  .calendar-header h2 {
+    font-size: 16px;
+  }
+
+  .calendar-header button {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .content-area {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding-bottom: 140px; /* espaço para o rodapé fixo (empilhado no mobile) */
+  }
+
+  .container {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    margin: 15px auto;
+  }
+
+  /* .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+
+    gap: 10px;
+    padding: 12px;
+
+    z-index: 1000;
+  }
+
+  .footer-datetime {
+    align-items: center;
+  }
+
+  .footer-carousel {
+    justify-content: center;
+  } */
+
+    .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+
+    gap: 2px 10px;
+    padding: 6px 12px;
+    font-size: 12px;
+
+    z-index: 1000;
+  }
+
+  .footer-datetime {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .footer-time {
+    font-size: 14px;
+  }
+
+  .footer-date {
+    font-size: 11px;
+  }
+
+  .footer-section {
+    gap: 6px;
+  }
+
+  .footer-weather-icon {
+    font-size: 14px;
+  }
+
+  .footer-carousel {
+    flex: 1 1 100%;
+    min-width: 0;
+    justify-content: center;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* ===== CLIENTES: TOOLBAR FIXA + BUSCA ===== */
+
+.clients-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: white;
+  margin: -20px -20px 0;
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.clients-toolbar h2 {
+  margin-top: 0;
+}
+
+.clients-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.clients-search {
+  flex: 1;
+  min-width: 180px;
+}
+
+.clients-actions .btn-primary {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.clients-empty {
+  color: #777;
+  text-align: center;
+  margin: 20px 0;
+}
+.login-logo {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto 15px auto;
+}
+}
