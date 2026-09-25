@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAQKv_UUQno7QKxu0VRf8aRATzsDSj-H78",
-  authDomain: "agendador-teste-fda5d.firebaseapp.com",
-  projectId: "agendador-teste-fda5d",
-  storageBucket: "agendador-teste-fda5d.firebasestorage.app",
-  messagingSenderId: "1070882240053",
-  appId: "1:1070882240053:web:1841ef4ab7dbe08a8ba37c"
+  apiKey: "AIzaSyAcyLBm7CCHC0haKu-jb1rmCqfSXdV4xvg",
+  authDomain: "site-reviva.firebaseapp.com",
+  projectId: "site-reviva",
+  storageBucket: "site-reviva.firebasestorage.app",
+  messagingSenderId: "1021300073747",
+  appId: "1:1021300073747:web:45a8ea2ac07991ad8f66e6"
 };
 
 const app = initializeApp(firebaseConfig);

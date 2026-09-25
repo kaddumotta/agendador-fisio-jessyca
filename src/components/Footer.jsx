@@ -180,6 +180,9 @@ export default function Footer() {
           </span>
         )}
       </div>
+          <div className="footer-section footer-credit">
+        <span>Desenvolvido por Carlos Eduardo Motta</span>
+      </div>
     </div>
   );
 }
