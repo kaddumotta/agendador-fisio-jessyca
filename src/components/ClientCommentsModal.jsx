@@ -7,9 +7,9 @@ export default function ClientCommentsModal({ isOpen, onClose, client }) {
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h3>Comentários de {client.name}</h3>
+        <h3>Observações de {client.name}</h3>
 
-        {comments.length === 0 && <p>Nenhum comentário registrado.</p>}
+        {comments.length === 0 && <p>Nenhuma observação registrada.</p>}
 
         <ul>
           {comments.map((comment, index) => (

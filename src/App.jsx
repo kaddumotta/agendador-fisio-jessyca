@@ -7,8 +7,12 @@ import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Schedule from "./pages/Schedule";
 import ClientRegister from "./pages/ClientRegister";
+import PatientRecord from "./pages/PatientRecord";
+import Finance from "./pages/Finance";
+import Dashboard from "./pages/Dashboard";
 import TomorrowReminders from "./pages/TomorrowReminders";
 import "./App.css";
+import "./physio.css";
 
 export default function App() {
   return (
@@ -35,6 +39,33 @@ export default function App() {
                   element={
                     <PrivateRoute>
                       <ClientRegister />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/clientes/:id/prontuario"
+                  element={
+                    <PrivateRoute>
+                      <PatientRecord />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/financeiro"
+                  element={
+                    <PrivateRoute>
+                      <Finance />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
                     </PrivateRoute>
                   }
                 />

@@ -1,239 +1,6 @@
-// // src/pages/Schedule.jsx
-// import { useState, useEffect } from "react";
-// import { db } from "../firebaseConfig";
-// import {
-//   collection,
-//   addDoc,
-//   getDocs,
-//   deleteDoc,
-//   doc,
-//   updateDoc,
-// } from "firebase/firestore";
-// import {
-//   getMonthDays,
-//   formatDateString,
-//   monthNames,
-//   weekDays,
-// } from "../utils/calendarUtils";
-// import AppointmentModal from "../components/AppointmentModal";
-// import DayAppointmentsModal from "../components/DayAppointmentsModal";
-// import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
-
-// const emptyForm = { clientId: "", date: "", time: "", notes: "" };
-
-// export default function Schedule() {
-//   const today = new Date();
-
-//   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-//   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-
-//   const [clients, setClients] = useState([]);
-//   const [allAppointments, setAllAppointments] = useState([]);
-
-//   const [selectedDay, setSelectedDay] = useState(null);
-//   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
-
-//   const [form, setForm] = useState(emptyForm);
-//   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-//   const [editingId, setEditingId] = useState(null);
-
-//   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
-//   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-//   const clientsRef = collection(db, "clients");
-//   const appointmentsRef = collection(db, "appointments");
-
-//   const fetchClients = async () => {
-//     const snapshot = await getDocs(clientsRef);
-//     setClients(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-//   };
-
-//   const fetchAppointments = async () => {
-//     const snapshot = await getDocs(appointmentsRef);
-//     setAllAppointments(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-//   };
-
-//   useEffect(() => {
-//     fetchClients();
-//     fetchAppointments();
-//   }, []);
-
-//   const getClientName = (id) => {
-//     const client = clients.find((c) => c.id === id);
-//     return client ? client.name : "Cliente não encontrado";
-//   };
-
-//   const getAppointmentsForDate = (dateString) => {
-//     return allAppointments
-//       .filter((a) => a.date === dateString)
-//       .sort((a, b) => a.time.localeCompare(b.time));
-//   };
-
-//   const handlePrevMonth = () => {
-//     if (currentMonth === 0) {
-//       setCurrentMonth(11);
-//       setCurrentYear(currentYear - 1);
-//     } else {
-//       setCurrentMonth(currentMonth - 1);
-//     }
-//   };
-
-//   const handleNextMonth = () => {
-//     if (currentMonth === 11) {
-//       setCurrentMonth(0);
-//       setCurrentYear(currentYear + 1);
-//     } else {
-//       setCurrentMonth(currentMonth + 1);
-//     }
-//   };
-
-//   const handleDayClick = (day) => {
-//     if (!day) return;
-//     const dateString = formatDateString(currentYear, currentMonth, day);
-//     setSelectedDay(dateString);
-//     setIsDayModalOpen(true);
-//   };
-
-//   const handleOpenCreateModal = () => {
-//     setForm({
-//       ...emptyForm,
-//       date: selectedDay || formatDateString(currentYear, currentMonth, today.getDate()),
-//     });
-//     setEditingId(null);
-//     setIsFormModalOpen(true);
-//   };
-
-//   const handleEditFromDayModal = (appointment) => {
-//     setForm({
-//       clientId: appointment.clientId,
-//       date: appointment.date,
-//       time: appointment.time,
-//       notes: appointment.notes || "",
-//     });
-//     setEditingId(appointment.id);
-//     setIsDayModalOpen(false);
-//     setIsFormModalOpen(true);
-//   };
-
-//   const handleDeleteRequest = (appointment) => {
-//     setAppointmentToDelete(appointment);
-//     setIsDeleteModalOpen(true);
-//   };
-
-//   const handleConfirmDelete = async () => {
-//     if (appointmentToDelete) {
-//       await deleteDoc(doc(db, "appointments", appointmentToDelete.id));
-//       await fetchAppointments();
-//     }
-//     setIsDeleteModalOpen(false);
-//     setAppointmentToDelete(null);
-//   };
-
-//   const handleFormChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-//   const handleFormSubmit = async (e) => {
-//     e.preventDefault();
-
-//     if (editingId) {
-//       await updateDoc(doc(db, "appointments", editingId), form);
-//     } else {
-//       await addDoc(appointmentsRef, form);
-//     }
-
-//     setIsFormModalOpen(false);
-//     setForm(emptyForm);
-//     setEditingId(null);
-//     await fetchAppointments();
-
-//     if (selectedDay) {
-//       setIsDayModalOpen(true);
-//     }
-//   };
-
-//   const days = getMonthDays(currentYear, currentMonth);
-
-//   return (
-//     <div>
-//       <div className="calendar-header">
-//         <button onClick={handlePrevMonth}>{"< Anterior"}</button>
-//         <h2>
-//           {monthNames[currentMonth]} {currentYear}
-//         </h2>
-//         <button onClick={handleNextMonth}>{"Próximo >"}</button>
-//       </div>
-
-//       <button className="btn-primary" onClick={handleOpenCreateModal}>
-//         Realizar Agendamento
-//       </button>
-
-//       <div className="calendar-grid">
-//         {weekDays.map((wd) => (
-//           <div key={wd} className="calendar-weekday">
-//             {wd}
-//           </div>
-//         ))}
-
-//         {days.map((day, index) => {
-//           if (!day) {
-//             return <div key={`empty-${index}`} className="calendar-day empty" />;
-//           }
-
-//           const dateString = formatDateString(currentYear, currentMonth, day);
-//           const dayAppointments = getAppointmentsForDate(dateString);
-
-//           return (
-//             <div
-//               key={dateString}
-//               className="calendar-day"
-//               onClick={() => handleDayClick(day)}
-//             >
-//               <span className="day-number">{day}</span>
-//               {dayAppointments.length > 0 && (
-//                 <span className="day-badge">{dayAppointments.length}</span>
-//               )}
-//             </div>
-//           );
-//         })}
-//       </div>
-
-//       <DayAppointmentsModal
-//         isOpen={isDayModalOpen}
-//         onClose={() => setIsDayModalOpen(false)}
-//         date={selectedDay}
-//         appointments={selectedDay ? getAppointmentsForDate(selectedDay) : []}
-//         getClientName={getClientName}
-//         onEdit={handleEditFromDayModal}
-//         onDelete={handleDeleteRequest}
-//       />
-
-//       <AppointmentModal
-//         isOpen={isFormModalOpen}
-//         onClose={() => {
-//           setIsFormModalOpen(false);
-//           setForm(emptyForm);
-//           setEditingId(null);
-//         }}
-//         clients={clients}
-//         form={form}
-//         onChange={handleFormChange}
-//         onSubmit={handleFormSubmit}
-//         isEditing={!!editingId}
-//       />
-
-//       <ConfirmDeleteModal
-//         isOpen={isDeleteModalOpen}
-//         onCancel={() => setIsDeleteModalOpen(false)}
-//         onConfirm={handleConfirmDelete}
-//       />
-//     </div>
-//   );
-// }
-
-
 // src/pages/Schedule.jsx
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "../firebaseConfig";
 import {
   collection,
@@ -242,6 +9,8 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import {
   getMonthDays,
@@ -249,15 +18,22 @@ import {
   monthNames,
   weekDays,
 } from "../utils/calendarUtils";
+import {
+  emptyAppointmentForm,
+  appointmentToForm,
+  buildAppointmentPayload,
+  emptyRecordForm,
+  buildRecordPayload,
+} from "../utils/physioUtils";
 import AppointmentModal from "../components/AppointmentModal";
 import DayAppointmentsModal from "../components/DayAppointmentsModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import ClientCommentsModal from "../components/ClientCommentsModal";
-
-const emptyForm = { clientId: "", date: "", time: "", notes: "" };
+import RecordModal from "../components/RecordModal";
 
 export default function Schedule() {
   const today = new Date();
+  const navigate = useNavigate();
 
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -268,7 +44,7 @@ export default function Schedule() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [isDayModalOpen, setIsDayModalOpen] = useState(false);
 
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(emptyAppointmentForm);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [returnToDay, setReturnToDay] = useState(false);
@@ -279,8 +55,14 @@ export default function Schedule() {
   const [commentsClient, setCommentsClient] = useState(null);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
 
+  // Registro do atendimento (prontuário) a partir de um agendamento
+  const [recordForm, setRecordForm] = useState(emptyRecordForm);
+  const [recordAppointment, setRecordAppointment] = useState(null);
+  const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
+
   const clientsRef = collection(db, "clients");
   const appointmentsRef = collection(db, "appointments");
+  const recordsRef = collection(db, "records");
 
   const fetchClients = async () => {
     const snapshot = await getDocs(clientsRef);
@@ -295,11 +77,12 @@ export default function Schedule() {
   useEffect(() => {
     fetchClients();
     fetchAppointments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getClientName = (id) => {
     const client = clients.find((c) => c.id === id);
-    return client ? client.name : "Cliente não encontrado";
+    return client ? client.name : "Paciente não encontrado";
   };
 
   const getAppointmentsForDate = (dateString) => {
@@ -333,21 +116,23 @@ export default function Schedule() {
     setIsDayModalOpen(true);
   };
 
-  // Botão "Realizar Agendamento" da tela principal
+  // Botão "Agendar Sessão" da tela principal
   const handleOpenCreateModal = () => {
     setForm({
-      ...emptyForm,
-      date: selectedDay || formatDateString(currentYear, currentMonth, today.getDate()),
+      ...emptyAppointmentForm,
+      date:
+        selectedDay ||
+        formatDateString(currentYear, currentMonth, today.getDate()),
     });
     setEditingId(null);
     setReturnToDay(false);
     setIsFormModalOpen(true);
   };
 
-  // Agendar direto da grade do dia (clicando no horário ou no botão "+ Novo agendamento")
+  // Agendar direto da grade do dia (clicando no horário ou no botão "+ Nova sessão")
   const handleCreateFromDayModal = (time = "") => {
     setForm({
-      ...emptyForm,
+      ...emptyAppointmentForm,
       date: selectedDay,
       time,
     });
@@ -358,27 +143,98 @@ export default function Schedule() {
   };
 
   const handleEditFromDayModal = (appointment) => {
-    setForm({
-      clientId: appointment.clientId,
-      date: appointment.date,
-      time: appointment.time,
-      notes: appointment.notes || "",
-    });
+    setForm(appointmentToForm(appointment));
     setEditingId(appointment.id);
     setReturnToDay(true);
     setIsDayModalOpen(false);
     setIsFormModalOpen(true);
   };
 
-  // Abre as observações do cadastro do cliente do agendamento
+  // Abre as observações do cadastro do paciente do agendamento
   const handleViewComments = (appointment) => {
     const client = clients.find((c) => c.id === appointment.clientId);
     if (!client) {
-      alert("Cliente não encontrado.");
+      alert("Paciente não encontrado.");
       return;
     }
     setCommentsClient(client);
     setIsCommentsModalOpen(true);
+  };
+
+  // Vai para o prontuário do paciente
+  const handleOpenRecord = (appointment) => {
+    const client = clients.find((c) => c.id === appointment.clientId);
+    if (!client) {
+      alert("Paciente não encontrado.");
+      return;
+    }
+    navigate(`/clientes/${client.id}/prontuario`);
+  };
+
+  // Abre a ficha de atendimento já preenchida com os dados do agendamento
+  const handleRegisterFromAppointment = async (appointment) => {
+    const client = clients.find((c) => c.id === appointment.clientId);
+    if (!client) {
+      alert("Paciente não encontrado.");
+      return;
+    }
+
+    // Se o paciente ainda não tem nenhum atendimento, é a 1ª consulta
+    const existing = await getDocs(
+      query(recordsRef, where("patientId", "==", client.id))
+    );
+    const type = existing.empty ? "CONSULTA" : "RETORNO";
+
+    const value =
+      appointment.sessionValue ?? client.defaultSessionValue ?? "";
+
+    setRecordForm({
+      ...emptyRecordForm,
+      type,
+      date: appointment.date,
+      location: appointment.location || client.defaultLocation || "Clínica",
+      plan: appointment.plan || client.plan || "Particular",
+      sessionValue: value === "" ? "" : String(value),
+    });
+    setRecordAppointment(appointment);
+    setIsDayModalOpen(false);
+    setIsRecordModalOpen(true);
+  };
+
+  const handleRecordChange = (e) => {
+    setRecordForm({ ...recordForm, [e.target.name]: e.target.value });
+  };
+
+  const handleCloseRecordModal = () => {
+    setIsRecordModalOpen(false);
+    setRecordForm(emptyRecordForm);
+    setRecordAppointment(null);
+    if (selectedDay) setIsDayModalOpen(true);
+  };
+
+  const handleRecordSubmit = async (e) => {
+    e.preventDefault();
+    if (!recordAppointment) return;
+
+    const payload = buildRecordPayload(recordForm);
+
+    const newRecord = await addDoc(recordsRef, {
+      ...payload,
+      patientId: recordAppointment.clientId,
+      appointmentId: recordAppointment.id,
+      createdAt: new Date().toISOString(),
+    });
+
+    await updateDoc(doc(db, "appointments", recordAppointment.id), {
+      status: "realizado",
+      recordId: newRecord.id,
+    });
+
+    setIsRecordModalOpen(false);
+    setRecordForm(emptyRecordForm);
+    setRecordAppointment(null);
+    await fetchAppointments();
+    if (selectedDay) setIsDayModalOpen(true);
   };
 
   const handleDeleteRequest = (appointment) => {
@@ -395,13 +251,33 @@ export default function Schedule() {
     setAppointmentToDelete(null);
   };
 
+  // Ao escolher o paciente (novo agendamento), puxa plano, local e valor padrão
   const handleFormChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+
+      if (name === "clientId" && !editingId) {
+        const client = clients.find((c) => c.id === value);
+        if (client) {
+          next.plan = client.plan || prev.plan;
+          next.location = client.defaultLocation || prev.location;
+          next.sessionValue =
+            client.defaultSessionValue !== undefined &&
+            client.defaultSessionValue !== null
+              ? String(client.defaultSessionValue)
+              : prev.sessionValue;
+        }
+      }
+
+      return next;
+    });
   };
 
   const handleCloseFormModal = () => {
     setIsFormModalOpen(false);
-    setForm(emptyForm);
+    setForm(emptyAppointmentForm);
     setEditingId(null);
 
     if (returnToDay && selectedDay) {
@@ -414,15 +290,16 @@ export default function Schedule() {
     e.preventDefault();
 
     const savedDate = form.date;
+    const payload = buildAppointmentPayload(form);
 
     if (editingId) {
-      await updateDoc(doc(db, "appointments", editingId), form);
+      await updateDoc(doc(db, "appointments", editingId), payload);
     } else {
-      await addDoc(appointmentsRef, form);
+      await addDoc(appointmentsRef, payload);
     }
 
     setIsFormModalOpen(false);
-    setForm(emptyForm);
+    setForm(emptyAppointmentForm);
     setEditingId(null);
     await fetchAppointments();
 
@@ -446,7 +323,7 @@ export default function Schedule() {
       </div>
 
       <button className="btn-primary" onClick={handleOpenCreateModal}>
-        Realizar Agendamento
+        Agendar Sessão
       </button>
 
       <div className="calendar-grid">
@@ -462,7 +339,9 @@ export default function Schedule() {
           }
 
           const dateString = formatDateString(currentYear, currentMonth, day);
-          const dayAppointments = getAppointmentsForDate(dateString);
+          const activeCount = getAppointmentsForDate(dateString).filter(
+            (a) => a.status !== "cancelado"
+          ).length;
 
           return (
             <div
@@ -471,8 +350,8 @@ export default function Schedule() {
               onClick={() => handleDayClick(day)}
             >
               <span className="day-number">{day}</span>
-              {dayAppointments.length > 0 && (
-                <span className="day-badge">{dayAppointments.length}</span>
+              {activeCount > 0 && (
+                <span className="day-badge">{activeCount}</span>
               )}
             </div>
           );
@@ -489,6 +368,8 @@ export default function Schedule() {
         onDelete={handleDeleteRequest}
         onCreate={handleCreateFromDayModal}
         onViewComments={handleViewComments}
+        onRegister={handleRegisterFromAppointment}
+        onOpenRecord={handleOpenRecord}
       />
 
       <AppointmentModal
@@ -501,10 +382,23 @@ export default function Schedule() {
         isEditing={!!editingId}
       />
 
+      <RecordModal
+        isOpen={isRecordModalOpen}
+        onClose={handleCloseRecordModal}
+        form={recordForm}
+        onChange={handleRecordChange}
+        onSubmit={handleRecordSubmit}
+        isEditing={false}
+        patientName={
+          recordAppointment ? getClientName(recordAppointment.clientId) : ""
+        }
+      />
+
       <ConfirmDeleteModal
         isOpen={isDeleteModalOpen}
         onCancel={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
+        message="Tem certeza que deseja excluir este agendamento?"
       />
 
       <ClientCommentsModal

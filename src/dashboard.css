@@ -1,0 +1,475 @@
+/* src/dashboard.css — estilos do painel */
+
+.dash {
+  --dash-main: #6d28d9;
+  --dash-tile: #7c3aed;
+  --dash-soft: #ede9fe;
+  --dash-ink: #2c3e50;
+  --dash-muted: #6b7280;
+}
+
+.dash-title {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.dash-title h2 {
+  margin: 0;
+  color: var(--dash-main);
+  letter-spacing: 1px;
+}
+
+.dash-title small {
+  color: var(--dash-muted);
+}
+
+.dash-filters {
+  background: var(--dash-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.dash-filters select {
+  min-width: 140px;
+}
+
+.dash-band {
+  margin: 16px 0 10px;
+  padding: 6px 10px;
+  background: var(--dash-tile);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+}
+
+/* ===== Cartões ===== */
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dash-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.dash-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84px;
+  padding: 10px;
+  background: var(--dash-tile);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.dash-split {
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.dash-split .dash-stat + .dash-stat {
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+  padding-left: 8px;
+}
+
+.dash-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-stat strong {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.dash-stat-big strong {
+  font-size: 34px;
+}
+
+.dash-stat span {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+/* ===== Painéis de gráfico ===== */
+
+.dash-panel {
+  border: 1px solid #d9d2f5;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.dash-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dash-panel-head h3 {
+  margin: 0;
+  font-size: 15px;
+  color: var(--dash-main);
+}
+
+.dash-small-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--dash-ink);
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-wrap {
+  position: relative;
+}
+
+.chart-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-grid {
+  stroke: #e5e5e5;
+  stroke-width: 1;
+}
+
+.chart-zero {
+  stroke: #b8b8b8;
+  stroke-width: 1;
+}
+
+.chart-cross {
+  stroke: #b8b8b8;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chart-axis {
+  font-size: 11px;
+  fill: var(--dash-muted);
+}
+
+.chart-end-label {
+  font-size: 11px;
+  font-weight: bold;
+  fill: var(--dash-ink);
+}
+
+.chart-dot {
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.chart-tooltip {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #d9d2f5;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--dash-ink);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 3;
+}
+
+.chart-tooltip strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.chart-tooltip i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* ===== Telas grandes ===== */
+
+.dash {
+  min-width: 0;
+}
+
+.dash-panel,
+.dash-charts > * {
+  min-width: 0;
+}
+
+.dash-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 1100px) {
+  .dash-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dash-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .dash-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dash-tile {
+    min-height: 100px;
+  }
+}
+
+/* ===== Mobile ===== */
+
+@media (max-width: 600px) {
+  .dash-title h2 {
+    font-size: 17px;
+    letter-spacing: 0;
+  }
+
+  .dash-title small {
+    font-size: 11px;
+  }
+
+  .dash-filters {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .dash-filters .field {
+    flex: 1 1 45%;
+  }
+
+  .dash-filters select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .dash-band {
+    font-size: 12px;
+    padding: 5px 8px;
+    margin: 12px 0 8px;
+  }
+
+  .dash-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .dash-grid-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dash-tile {
+    min-height: 64px;
+    padding: 8px 6px;
+    border-radius: 8px;
+  }
+
+  .dash-stat-big strong {
+    font-size: 24px;
+  }
+
+  .dash-stat strong {
+    font-size: 15px;
+  }
+
+  .dash-stat span {
+    font-size: 11px;
+  }
+
+  .dash-panel {
+    padding: 8px;
+  }
+
+  .dash-panel-head h3 {
+    font-size: 13px;
+  }
+
+  .chart-legend {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dash-panel-head .dash-small-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
+
+/* ===== Ícones dos cartões ===== */
+
+.dash-tile {
+  gap: 12px;
+}
+
+.dash-tile-icon {
+  flex: none;
+  display: flex;
+  color: #fff;
+}
+
+.dash-tile-icon svg {
+  width: 46px;
+  height: 46px;
+}
+
+.dash-stat-icon {
+  display: flex;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.dash-stat-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.dash-tile > .dash-stat-big {
+  flex: 0 1 auto;
+  min-width: 70px;
+}
+
+@media (max-width: 600px) {
+  .dash-tile {
+    gap: 8px;
+  }
+
+  .dash-tile-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .dash-stat-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ===== Compacto no computador (telas acima de 600px) ===== */
+
+@media (min-width: 601px) {
+  .dash-title h2 {
+    font-size: 20px;
+  }
+
+  .dash-title small {
+    font-size: 12px;
+  }
+
+  .dash-filters {
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+
+  .dash-filters .field > span {
+    font-size: 12px;
+  }
+
+  .dash-filters select {
+    padding: 4px 8px;
+    font-size: 13px;
+    min-width: 120px;
+  }
+
+  .dash-band {
+    font-size: 12px;
+    padding: 4px 8px;
+    margin: 10px 0 8px;
+  }
+
+  .dash-grid {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .dash-tile {
+    min-height: 72px;
+    padding: 8px 10px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+
+  .dash-tile-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .dash-stat-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .dash-stat-big strong {
+    font-size: 26px;
+  }
+
+  .dash-stat strong {
+    font-size: 17px;
+  }
+
+  .dash-stat span {
+    font-size: 11px;
+  }
+
+  .dash-panel {
+    padding: 8px 10px;
+    margin-bottom: 8px;
+  }
+
+  .dash-panel-head h3 {
+    font-size: 13px;
+  }
+
+  .dash-small-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+
+  .chart-legend {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+}
+
+@media (min-width: 601px) {
+  .dash-stat.dash-stat-big strong {
+    font-size: 28px;
+  }
+}

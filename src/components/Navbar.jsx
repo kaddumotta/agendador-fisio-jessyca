@@ -8,8 +8,6 @@ const DISPLAY_NAMES = {
   "jessyca@agendador.com.br": "Jéssyca Silva",
 };
 
-
-
 function getDisplayName(user) {
   if (!user) return "";
   if (user.displayName) return user.displayName;
@@ -40,7 +38,9 @@ export default function Navbar() {
 
       <div className="navbar-links">
         <Link to="/">Agenda</Link>
-        <Link to="/clientes">Clientes</Link>
+        <Link to="/clientes">Pacientes</Link>
+        <Link to="/financeiro">Financeiro</Link>
+        <Link to="/dashboard">Painel</Link>
         <Link to="/avisos">Avisos</Link>
         <button
           className="navbar-logout navbar-logout-mobile"
