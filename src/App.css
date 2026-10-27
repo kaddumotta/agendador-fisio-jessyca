@@ -122,7 +122,7 @@ button {
 }
 
 button {
-  background-color: #25d366;
+  background-color: #7C3AED;
   color: white;
   border: none;
   cursor: pointer;
@@ -130,7 +130,7 @@ button {
 }
 
 button:hover {
-  background-color: #1ebe5d;
+  background-color: #4a06be;
 }
 
 ul {

@@ -1,5 +1,6 @@
-// src/pages/ClientRegister.jsx
-import { useState, useEffect } from "react";
+// src/pages/ClientRegister.jsx  (lista de pacientes)
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { db } from "../firebaseConfig";
 import {
   collection,
@@ -8,21 +9,35 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import ClientModal from "../components/ClientModal";
 import ClientCommentsModal from "../components/ClientCommentsModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import PageHeader from "../components/PageHeader";
+import {
+  formatBRL,
+  normalizeText,
+  summarizeFinance,
+  toNumber,
+} from "../utils/physioUtils";
 
-const emptyForm = { name: "", email: "", phone: "", comment: "" };
-
-// Ignora maiúsculas/minúsculas e acentos na busca
-const normalizeText = (text) =>
-  (text || "")
-    .toString()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
+const emptyForm = {
+  name: "",
+  birthDate: "",
+  sex: "",
+  cpf: "",
+  rg: "",
+  address: "",
+  phone: "",
+  phoneLandline: "",
+  email: "",
+  plan: "Particular",
+  defaultLocation: "Clínica",
+  defaultSessionValue: "",
+  comment: "",
+};
 
 const svgProps = {
   xmlns: "http://www.w3.org/2000/svg",
@@ -64,6 +79,17 @@ function CommentsIcon() {
   );
 }
 
+function RecordIcon() {
+  return (
+    <svg {...svgProps} {...strokeProps}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+    </svg>
+  );
+}
+
 function WhatsAppIcon() {
   return (
     <svg {...svgProps} fill="currentColor">
@@ -74,7 +100,11 @@ function WhatsAppIcon() {
 }
 
 export default function ClientRegister() {
+  const navigate = useNavigate();
+
   const [clients, setClients] = useState([]);
+  const [records, setRecords] = useState([]);
+  const [payments, setPayments] = useState([]);
   const [search, setSearch] = useState("");
 
   const [form, setForm] = useState(emptyForm);
@@ -89,15 +119,36 @@ export default function ClientRegister() {
 
   const clientsRef = collection(db, "clients");
 
-  const fetchClients = async () => {
-    const snapshot = await getDocs(clientsRef);
-    const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const fetchAll = async () => {
+    const [clientsSnap, recordsSnap, paymentsSnap] = await Promise.all([
+      getDocs(collection(db, "clients")),
+      getDocs(collection(db, "records")),
+      getDocs(collection(db, "payments")),
+    ]);
+
+    const list = clientsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    list.sort((a, b) => (a.name || "").localeCompare(b.name || "", "pt-BR"));
+
     setClients(list);
+    setRecords(recordsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    setPayments(paymentsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
   };
 
   useEffect(() => {
-    fetchClients();
+    fetchAll();
   }, []);
+
+  // Valor em aberto de cada paciente
+  const balances = useMemo(() => {
+    const map = {};
+    clients.forEach((c) => {
+      map[c.id] = summarizeFinance(
+        records.filter((r) => r.patientId === c.id),
+        payments.filter((p) => p.patientId === c.id)
+      );
+    });
+    return map;
+  }, [clients, records, payments]);
 
   const filteredClients = clients.filter((client) =>
     normalizeText(client.name).includes(normalizeText(search))
@@ -116,9 +167,22 @@ export default function ClientRegister() {
         : "";
 
     setForm({
-      name: client.name,
-      email: client.email,
-      phone: client.phone,
+      name: client.name || "",
+      birthDate: client.birthDate || "",
+      sex: client.sex || "",
+      cpf: client.cpf || "",
+      rg: client.rg || "",
+      address: client.address || "",
+      phone: client.phone || "",
+      phoneLandline: client.phoneLandline || "",
+      email: client.email || "",
+      plan: client.plan || "Particular",
+      defaultLocation: client.defaultLocation || "Clínica",
+      defaultSessionValue:
+        client.defaultSessionValue !== undefined &&
+        client.defaultSessionValue !== null
+          ? String(client.defaultSessionValue)
+          : "",
       comment: lastComment,
     });
     setEditingId(client.id);
@@ -129,32 +193,46 @@ export default function ClientRegister() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-    const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, email, phone, comment } = form;
+    const { comment, defaultSessionValue, ...rest } = form;
 
-    // O comentário é sempre único: substitui o que estava salvo
+    // A observação geral é sempre única: substitui a que estava salva
     const comments = comment.trim() !== "" ? [comment.trim()] : [];
 
+    const payload = {
+      ...rest,
+      name: rest.name.trim(),
+      defaultSessionValue: toNumber(defaultSessionValue),
+      comments,
+    };
+
     if (editingId) {
-      await updateDoc(doc(db, "clients", editingId), {
-        name,
-        email,
-        phone,
-        comments,
-      });
+      await updateDoc(doc(db, "clients", editingId), payload);
     } else {
-      await addDoc(clientsRef, { name, email, phone, comments });
+      await addDoc(clientsRef, payload);
     }
 
     setIsFormModalOpen(false);
     setForm(emptyForm);
     setEditingId(null);
-    await fetchClients();
+    await fetchAll();
   };
 
-  const handleDeleteRequest = (client) => {
+  const handleDeleteRequest = async (client) => {
+    // Preserva o histórico: paciente com prontuário não pode ser excluído
+    const existing = await getDocs(
+      query(collection(db, "records"), where("patientId", "==", client.id))
+    );
+
+    if (!existing.empty) {
+      alert(
+        "Este paciente já possui atendimentos no prontuário e não pode ser excluído, para preservar o histórico."
+      );
+      return;
+    }
+
     setClientToDelete(client);
     setIsDeleteModalOpen(true);
   };
@@ -162,7 +240,7 @@ export default function ClientRegister() {
   const handleConfirmDelete = async () => {
     if (clientToDelete) {
       await deleteDoc(doc(db, "clients", clientToDelete.id));
-      await fetchClients();
+      await fetchAll();
     }
     setIsDeleteModalOpen(false);
     setClientToDelete(null);
@@ -181,26 +259,26 @@ export default function ClientRegister() {
 
   const emptyMessage =
     search.trim() !== ""
-      ? "Nenhum cliente encontrado para essa busca."
-      : "Nenhum cliente cadastrado.";
+      ? "Nenhum paciente encontrado para essa busca."
+      : "Nenhum paciente cadastrado.";
 
   return (
-    <div>
-      <div className="clients-toolbar">
-        <h2>Clientes</h2>
+    <div className="themed">
+      <PageHeader title="LISTA DE PACIENTES E PRONTUÁRIOS" />
 
+      <div className="clients-toolbar">
         <div className="clients-actions">
           <input
             type="search"
             className="clients-search"
-            placeholder="Buscar cliente por nome..."
+            placeholder="Buscar paciente por nome..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            aria-label="Buscar cliente por nome"
+            aria-label="Buscar paciente por nome"
           />
 
           <button className="btn-primary" onClick={handleOpenCreateModal}>
-            Criar Registro
+            Novo Paciente
           </button>
         </div>
       </div>
@@ -210,53 +288,80 @@ export default function ClientRegister() {
       )}
 
       <ul>
-        {filteredClients.map((client) => (
-          <li key={client.id}>
-            <span>{client.name}</span>
+        {filteredClients.map((client) => {
+          const balance = balances[client.id];
+          const open = balance ? balance.open : 0;
 
-            <div className="icon-actions">
-              <button
-                type="button"
-                className="icon-btn icon-btn-edit"
-                onClick={() => handleOpenEditModal(client)}
-                aria-label="Editar cliente"
-                title="Editar"
-              >
-                <EditIcon />
-              </button>
+          return (
+            <li key={client.id}>
+              <span>
+                <strong>{client.name}</strong>
+                <small className="patient-sub">
+                  {[client.plan, balance && `${balance.sessions} sessões`]
+                    .filter(Boolean)
+                    .join(" · ")}
+                  {open > 0 && (
+                    <span className="badge badge-open">
+                      Em aberto: {formatBRL(open)}
+                    </span>
+                  )}
+                </small>
+              </span>
 
-              <button
-                type="button"
-                className="icon-btn icon-btn-delete"
-                onClick={() => handleDeleteRequest(client)}
-                aria-label="Excluir cliente"
-                title="Excluir"
-              >
-                <DeleteIcon />
-              </button>
+              <div className="icon-actions">
+                <button
+                  type="button"
+                  className="icon-btn icon-btn-record"
+                  onClick={() => navigate(`/clientes/${client.id}/prontuario`)}
+                  aria-label="Abrir prontuário"
+                  title="Prontuário"
+                >
+                  <RecordIcon />
+                </button>
 
-              <button
-                type="button"
-                className="icon-btn icon-btn-whatsapp"
-                onClick={() => openWhatsApp(client)}
-                aria-label="Abrir WhatsApp"
-                title="WhatsApp"
-              >
-                <WhatsAppIcon />
-              </button>
+                <button
+                  type="button"
+                  className="icon-btn icon-btn-edit"
+                  onClick={() => handleOpenEditModal(client)}
+                  aria-label="Editar paciente"
+                  title="Editar"
+                >
+                  <EditIcon />
+                </button>
 
-              <button
-                type="button"
-                className="icon-btn icon-btn-comments"
-                onClick={() => handleOpenComments(client)}
-                aria-label="Ver comentários"
-                title="Comentários"
-              >
-                <CommentsIcon />
-              </button>
-            </div>
-          </li>
-        ))}
+                <button
+                  type="button"
+                  className="icon-btn icon-btn-delete"
+                  onClick={() => handleDeleteRequest(client)}
+                  aria-label="Excluir paciente"
+                  title="Excluir"
+                >
+                  <DeleteIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="icon-btn icon-btn-whatsapp"
+                  onClick={() => openWhatsApp(client)}
+                  aria-label="Abrir WhatsApp"
+                  title="WhatsApp"
+                >
+                  <WhatsAppIcon />
+                </button>
+
+                <button
+                  type="button"
+                  className="icon-btn icon-btn-comments"
+                  onClick={() => handleOpenComments(client)}
+                  aria-label="Ver observações"
+                  title="Observações"
+                >
+                  <CommentsIcon />
+                </button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
 
       <ClientModal
@@ -282,6 +387,7 @@ export default function ClientRegister() {
         isOpen={isDeleteModalOpen}
         onCancel={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
+        message="Tem certeza que deseja excluir este paciente?"
       />
     </div>
   );

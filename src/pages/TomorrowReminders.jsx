@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { PROFESSIONAL } from "../utils/physioUtils";
+import PageHeader from "../components/PageHeader";
 
 function formatDateToBR(isoDate) {
   const [year, month, day] = isoDate.split("-");
@@ -15,6 +17,9 @@ function toLocalISODate(date) {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
+// "Dra. Jéssyca" a partir do nome completo configurado em PROFESSIONAL
+const professionalShortName = PROFESSIONAL.name.split(" ").slice(0, 2).join(" ");
 
 export default function TomorrowReminders() {
   const [appointments, setAppointments] = useState([]);
@@ -34,8 +39,11 @@ export default function TomorrowReminders() {
       where("date", "==", dateString)
     );
     const snapshot = await getDocs(q);
-    const list = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-    list.sort((a, b) => a.time.localeCompare(b.time));
+    const list = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      // Só quem ainda precisa de confirmação (agendamentos antigos não têm status)
+      .filter((a) => !a.status || a.status === "agendado");
+    list.sort((a, b) => (a.time || "").localeCompare(b.time || ""));
     setAppointments(list);
   };
 
@@ -47,18 +55,32 @@ export default function TomorrowReminders() {
     return clients.find((c) => c.id === id);
   };
 
-  const buildWhatsAppLink = (client, time) => {
-    const message = `Olá ${client.name}, confirmando seu horário amanhã (${dateStringBR}) às ${time}. Nos vemos lá!`;
+  const buildWhatsAppLink = (client, appointment) => {
+    const firstName = (client.name || "").trim().split(" ")[0];
+    const where =
+      appointment.location === "Domiciliar"
+        ? " (atendimento domiciliar)"
+        : appointment.location
+        ? ` (${appointment.location})`
+        : "";
+
+    const message =
+      `Olá ${firstName}, tudo bem? Aqui é a ${professionalShortName}. ` +
+      `Passando para confirmar sua sessão de fisioterapia amanhã (${dateStringBR}) ` +
+      `às ${appointment.time}${where}. Posso confirmar seu horário?`;
+
     const encodedMessage = encodeURIComponent(message);
-    const phone = client.phone.replace(/\D/g, "");
+    const phone = (client.phone || "").replace(/\D/g, "");
     return `https://wa.me/${phone}?text=${encodedMessage}`;
   };
 
   return (
-    <div>
-      <h2>Agendamentos de amanhã ({dateStringBR})</h2>
+    <div className="themed">
+      <PageHeader title="AVISOS" />
 
-      {appointments.length === 0 && <p>Nenhum agendamento para amanhã.</p>}
+      <h3 className="page-band">Sessões de amanhã ({dateStringBR})</h3>
+
+      {appointments.length === 0 && <p>Nenhuma sessão para confirmar amanhã.</p>}
 
       <ul>
         {appointments.map((appointment) => {
@@ -69,9 +91,12 @@ export default function TomorrowReminders() {
             <li key={appointment.id}>
               <span>
                 {appointment.time} - {client.name}
+                {appointment.location && (
+                  <small className="patient-sub">{appointment.location}</small>
+                )}
               </span>
               <a
-                href={buildWhatsAppLink(client, appointment.time)}
+                href={buildWhatsAppLink(client, appointment)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

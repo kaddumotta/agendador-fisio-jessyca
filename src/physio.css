@@ -1,0 +1,791 @@
+/* src/physio.css — estilos novos (importar depois do App.css) */
+
+/* ===== Campos de formulário com rótulo ===== */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.field > span {
+  font-size: 13px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.form-section {
+  margin: 8px 0 0;
+  padding-bottom: 4px;
+  font-size: 14px;
+  color: #2c3e50;
+  border-bottom: 1px solid #eee;
+}
+
+/* ===== Botões de ícone extras ===== */
+
+.icon-btn-record {
+  background-color: #8e44ad;
+}
+
+.icon-btn-record:hover {
+  background-color: #7d3c98;
+}
+
+.icon-btn-done {
+  background-color: #1e8449;
+}
+
+.icon-btn-done:hover {
+  background-color: #196f3d;
+}
+
+.icon-btn.icon-btn-sm {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  font-size: 13px;
+}
+
+/* ===== Lista de pacientes ===== */
+
+.patient-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: normal;
+  color: #777;
+}
+
+.badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.badge-open {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+.badge-first {
+  background: #d6eaf8;
+  color: #1f618d;
+}
+
+.badge-return {
+  background: #d5f5e3;
+  color: #1e8449;
+}
+
+.badge-neutral {
+  background: #eee;
+  color: #555;
+}
+
+/* ===== Prontuário ===== */
+
+.page-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.page-actions-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.page-actions .btn-primary {
+  margin-bottom: 0;
+}
+
+.record-patient h2 {
+  margin: 0 0 8px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 4px 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.info-wide {
+  grid-column: 1 / -1;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: #f7f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.summary-card small {
+  font-size: 11px;
+  color: #777;
+}
+
+.summary-card strong {
+  font-size: 17px;
+  color: #2c3e50;
+}
+
+.summary-card-alert {
+  background: #fdecea;
+  border-color: #f5b7b1;
+}
+
+.summary-card-alert strong {
+  color: #c0392b;
+}
+
+.record-card {
+  border: 1px solid #e5e5e5;
+  border-left: 4px solid #8e44ad;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.record-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.record-card-header .icon-actions {
+  flex-wrap: nowrap;
+}
+
+.record-fields {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.record-fields dt {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.record-fields dd {
+  margin: 0;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.record-vitals {
+  margin: 10px 0 0;
+  padding: 6px 10px;
+  background: #f7f9fa;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #2c3e50;
+}
+
+.record-money {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.payments-list li {
+  font-size: 14px;
+}
+
+/* ===== Financeiro ===== */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.filter-bar input {
+  width: auto;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inline-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.inline-check input {
+  width: auto;
+  padding: 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th,
+.data-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table th {
+  font-size: 12px;
+  color: #777;
+  text-transform: uppercase;
+}
+
+.data-table .num {
+  text-align: right;
+}
+
+.data-table tr.clickable {
+  cursor: pointer;
+}
+
+.data-table tr.clickable:hover {
+  background: #f7f9fa;
+}
+
+.text-open {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+.two-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* ===== Impressão do prontuário ===== */
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print,
+  .navbar,
+  .footer,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  html,
+  body,
+  #root,
+  .app-layout,
+  .content-area,
+  .container {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    max-width: none !important;
+  }
+
+  .print-header {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .print-header h2 {
+    margin: 8px 0 0;
+  }
+
+  .record-card {
+    break-inside: avoid;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-actions-right {
+    width: 100%;
+  }
+
+  .page-actions-right button {
+    flex: 1;
+  }
+}
+
+/* ===== LAYOUT: tela cheia no computador ===== */
+
+.container {
+  max-width: none;
+  width: auto;
+  min-width: 0;
+  margin: 20px 24px;
+  overflow-x: hidden;
+}
+
+@media (min-width: 1000px) {
+  .calendar-day {
+    min-height: 90px;
+  }
+}
+
+/* ===== MOBILE: fontes e espaçamentos menores ===== */
+
+@media (max-width: 600px) {
+  .container {
+    margin: 8px;
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 15px;
+  }
+
+  input,
+  select,
+  button {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .btn-primary {
+    padding: 8px 12px;
+  }
+
+  /* menu superior */
+  .navbar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .navbar-welcome {
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+
+  .navbar-links {
+    gap: 0;
+  }
+
+  .navbar a {
+    padding: 6px 5px;
+    font-size: 12px;
+  }
+
+  .navbar-logout-mobile {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  /* listas */
+  li {
+    padding: 8px 4px;
+  }
+
+  li > span > strong {
+    font-size: 14px;
+  }
+
+  .patient-sub {
+    font-size: 11px;
+  }
+
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+
+  .icon-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* formulários e modais */
+  .modal-content {
+    padding: 16px 14px;
+    gap: 10px;
+  }
+
+  .modal-content h3 {
+    font-size: 16px;
+  }
+
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea {
+    padding: 9px;
+    font-size: 14px;
+  }
+
+  .modal-content li span {
+    font-size: 13px;
+  }
+
+  .modal-actions button {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .field > span {
+    font-size: 12px;
+  }
+
+  .form-section {
+    font-size: 13px;
+  }
+
+  /* prontuário e financeiro */
+  .record-fields dd,
+  .info-grid {
+    font-size: 13px;
+  }
+
+  .summary-card strong {
+    font-size: 15px;
+  }
+
+  .data-table {
+    font-size: 12px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 6px;
+  }
+}
+
+/* ===== Chips de seleção (Financeiro) ===== */
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 16px;
+  border: 1px solid #c9c2ee;
+  background: #fff;
+  color: #555;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.chip:hover {
+  background: #f3f0ff;
+}
+
+.chip.active {
+  background: #6d28d9;
+  border-color: #6d28d9;
+  color: #fff;
+}
+
+.chip.active:hover {
+  background: #5b21b6;
+}
+
+@media (max-width: 600px) {
+  .chip {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+/* ===== Cabeçalho das páginas (logo + título + imagem) ===== */
+
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.page-title h2 {
+  margin: 0;
+  color: #6d28d9;
+  letter-spacing: 1px;
+}
+
+.page-title small {
+  color: #6b7280;
+}
+
+.page-title-logo {
+  max-height: 70px;
+  max-width: 22%;
+  object-fit: contain;
+}
+
+.page-title-art {
+  max-height: 90px;
+  max-width: 18%;
+  object-fit: contain;
+}
+
+@media (min-width: 601px) {
+  .page-title h2 {
+    font-size: 20px;
+  }
+
+  .page-title small {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-title {
+    gap: 8px;
+  }
+
+  .page-title h2 {
+    font-size: 15px;
+  }
+
+  .page-title small {
+    font-size: 11px;
+  }
+
+  .page-title-logo {
+    max-height: 38px;
+  }
+
+  .page-title-art {
+    max-height: 54px;
+  }
+}
+
+/* ===== Tema roxo (mesma identidade do painel) ===== */
+
+.themed {
+  --theme-main: #6d28d9;
+  --theme-tile: #7c3aed;
+  --theme-hover: #5b21b6;
+  --theme-soft: #ede9fe;
+  --theme-softer: #f6f3ff;
+  --theme-line: #d9d2f5;
+}
+
+.themed .btn-primary {
+  background-color: var(--theme-tile);
+  color: #fff;
+}
+
+.themed .btn-primary:hover {
+  background-color: var(--theme-hover);
+}
+
+.themed .btn-secondary {
+  background-color: var(--theme-soft);
+  color: var(--theme-main);
+}
+
+.themed .btn-secondary:hover {
+  background-color: var(--theme-line);
+}
+
+.themed .page-band {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  background: var(--theme-tile);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+}
+
+.themed > h3,
+.themed > div > h3,
+.themed .section-title h3 {
+  color: var(--theme-main);
+  border-bottom: 2px solid var(--theme-line);
+  padding-bottom: 4px;
+}
+
+.themed > ul > li {
+  border-bottom-color: var(--theme-line);
+}
+
+.themed > ul > li:hover {
+  background-color: var(--theme-softer);
+}
+
+.themed .filter-bar {
+  background: var(--theme-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.themed .summary-card {
+  background: var(--theme-softer);
+  border-color: var(--theme-line);
+}
+
+.themed .summary-card strong {
+  color: var(--theme-main);
+}
+
+.themed .summary-card-alert {
+  background: #fdecea;
+  border-color: #f5b7b1;
+}
+
+.themed .summary-card-alert strong {
+  color: #c0392b;
+}
+
+.themed .data-table th {
+  color: var(--theme-main);
+  background: var(--theme-soft);
+}
+
+.themed .data-table td {
+  border-bottom-color: var(--theme-line);
+}
+
+.themed .data-table tr.clickable:hover {
+  background: var(--theme-softer);
+}
+
+.themed .record-card {
+  border-color: var(--theme-line);
+}
+
+.themed .record-patient h2 {
+  color: var(--theme-main);
+}
+
+/* Pacientes: a barra de busca fica abaixo do cabeçalho */
+.themed .clients-toolbar {
+  margin-top: 0;
+  padding-top: 10px;
+  border-bottom-color: var(--theme-line);
+}
+
+/* ===== Agenda ===== */
+
+.agenda .calendar-header {
+  background: var(--theme-soft);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.agenda .calendar-header h2 {
+  margin: 0;
+  color: var(--theme-main);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.agenda .calendar-header button {
+  background-color: var(--theme-tile);
+  color: #fff;
+}
+
+.agenda .calendar-header button:hover {
+  background-color: var(--theme-hover);
+}
+
+.agenda .calendar-weekday {
+  background: var(--theme-tile);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.agenda .calendar-day {
+  background-color: #fff;
+  border-color: var(--theme-line);
+  border-radius: 8px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.agenda .calendar-day:hover {
+  background-color: var(--theme-soft);
+  border-color: var(--theme-tile);
+}
+
+.agenda .calendar-day.has-events {
+  background-color: var(--theme-softer);
+}
+
+.agenda .calendar-day.today {
+  border: 2px solid var(--theme-main);
+}
+
+.agenda .calendar-day.today .day-number {
+  color: var(--theme-main);
+}
+
+.agenda .calendar-day.empty {
+  background-color: transparent;
+  border: none;
+}
+
+.agenda .day-badge {
+  background-color: var(--theme-tile);
+}

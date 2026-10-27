@@ -1,10 +1,15 @@
 // src/components/Footer.jsx
 import { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-function getTodayString() {
-  const now = new Date();
+function getTodayString(now = new Date()) {
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const day = String(now.getDate()).padStart(2, "0");
@@ -105,29 +110,39 @@ export default function Footer() {
     );
   }, []);
 
+  const todayString = getTodayString(now);
+
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchClients = async () => {
       const clientsSnapshot = await getDocs(collection(db, "clients"));
       const clientsList = clientsSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
       setClients(clientsList);
+    };
 
-      const todayString = getTodayString();
-      const appointmentsRef = collection(db, "appointments");
-      const q = query(appointmentsRef, where("date", "==", todayString));
-      const appointmentsSnapshot = await getDocs(q);
+    fetchClients();
+  }, []);
 
-      const appointmentsList = appointmentsSnapshot.docs
+  // Escuta em tempo real: ao concluir/cancelar um horário, ele sai do letreiro na hora.
+  // Refaz a escuta quando vira o dia.
+  useEffect(() => {
+    const appointmentsRef = collection(db, "appointments");
+    const q = query(appointmentsRef, where("date", "==", todayString));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      // Só os horários ainda em aberto (sem status = agendado)
+      const appointmentsList = snapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
+        .filter((a) => (a.status || "agendado") === "agendado")
         .sort((a, b) => a.time.localeCompare(b.time));
 
       setTodayAppointments(appointmentsList);
-    };
+    }, () => setTodayAppointments([]));
 
-    fetchData();
-  }, []);
+    return unsubscribe;
+  }, [todayString]);
 
   useEffect(() => {
     if (todayAppointments.length === 0) return;
@@ -144,7 +159,9 @@ export default function Footer() {
     return client ? client.name : "Cliente não encontrado";
   };
 
-  const currentAppointment = todayAppointments[currentIndex];
+  // A lista pode encolher quando um horário é concluído
+  const currentAppointment =
+    todayAppointments[currentIndex % (todayAppointments.length || 1)];
 
   return (
     <div className="footer">
@@ -171,7 +188,7 @@ export default function Footer() {
 
       <div className="footer-section footer-carousel">
         {todayAppointments.length === 0 && (
-          <span>Nenhum agendamento para hoje</span>
+          <span>Nenhum horário em aberto hoje</span>
         )}
 
         {currentAppointment && (

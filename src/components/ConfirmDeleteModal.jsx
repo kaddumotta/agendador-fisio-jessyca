@@ -1,12 +1,18 @@
 // src/components/ConfirmDeleteModal.jsx
-export default function ConfirmDeleteModal({ isOpen, onCancel, onConfirm }) {
+export default function ConfirmDeleteModal({
+  isOpen,
+  onCancel,
+  onConfirm,
+  title = "Confirmar exclusão",
+  message = "Tem certeza que deseja excluir este agendamento?",
+}) {
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
       <div className="modal-content modal-small">
-        <h3>Confirmar exclusão</h3>
-        <p>Tem certeza que deseja excluir este agendamento?</p>
+        <h3>{title}</h3>
+        <p>{message}</p>
 
         <div className="modal-actions">
           <button className="btn-danger" onClick={onConfirm}>

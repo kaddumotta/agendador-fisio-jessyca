@@ -1,99 +1,16 @@
-// // src/components/DayAppointmentsModal.jsx
-// function formatDateToBR(isoDate) {
-//   const [year, month, day] = isoDate.split("-");
-//   return `${day}/${month}/${year}`;
-// }
-
-// export default function DayAppointmentsModal({
-//   isOpen,
-//   onClose,
-//   date,
-//   appointments,
-//   getClientName,
-//   onEdit,
-//   onDelete,
-// }) {
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="modal-overlay">
-//       <div className="modal-content">
-//         <h3>Agendamentos do dia {date ? formatDateToBR(date) : ""}</h3>
-
-//         {appointments.length === 0 && <p>Nenhum agendamento nesse dia.</p>}
-
-//         <ul>
-//           {appointments.map((appointment) => (
-//             <li key={appointment.id}>
-//               <span>
-//                 {appointment.time} - {getClientName(appointment.clientId)}
-//                 {appointment.notes ? ` - ${appointment.notes}` : ""}
-//               </span>
-//               <div className="icon-actions">
-//                 <button
-//                   className="icon-btn icon-btn-edit"
-//                   onClick={() => onEdit(appointment)}
-//                   aria-label="Editar agendamento"
-//                   title="Editar"
-//                 >
-//                   <svg
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     width="18"
-//                     height="18"
-//                     viewBox="0 0 24 24"
-//                     fill="none"
-//                     stroke="currentColor"
-//                     strokeWidth="2"
-//                     strokeLinecap="round"
-//                     strokeLinejoin="round"
-//                   >
-//                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-//                   </svg>
-//                 </button>
-
-//                 <button
-//                   className="icon-btn icon-btn-delete"
-//                   onClick={() => onDelete(appointment)}
-//                   aria-label="Excluir agendamento"
-//                   title="Excluir"
-//                 >
-//                   <svg
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     width="18"
-//                     height="18"
-//                     viewBox="0 0 24 24"
-//                     fill="none"
-//                     stroke="currentColor"
-//                     strokeWidth="2"
-//                     strokeLinecap="round"
-//                     strokeLinejoin="round"
-//                   >
-//                     <line x1="18" y1="6" x2="6" y2="18" />
-//                     <line x1="6" y1="6" x2="18" y2="18" />
-//                   </svg>
-//                 </button>
-//               </div>
-//             </li>
-//           ))}
-//         </ul>
-
-//         <div className="modal-actions">
-//           <button type="button" className="btn-secondary" onClick={onClose}>
-//             Fechar
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 // src/components/DayAppointmentsModal.jsx
 import { useEffect, useRef } from "react";
+import {
+  APPOINTMENT_STATUS,
+  DEFAULT_DURATION,
+  formatDateBR,
+} from "../utils/physioUtils";
 
 const START_HOUR = 5;
 const END_HOUR = 21; // última linha: 21:00 - 22:00
-const HOUR_HEIGHT = 72; // px por hora
-const EVENT_MINUTES = 40; // duração visual do bloco (altura = 48px)
+const HOUR_HEIGHT = 88; // px por hora
+const MIN_EVENT_PX = 54; // altura mínima do bloco (cabem 2 linhas de botões)
+const MIN_EVENT_MINUTES = (MIN_EVENT_PX * 60) / HOUR_HEIGHT;
 
 const HOURS = Array.from(
   { length: END_HOUR - START_HOUR + 1 },
@@ -203,15 +120,21 @@ const GRID_CSS = `
   background-color: #d5f5e3;
   border-left: 4px solid #25d366;
   border-radius: 6px;
-  padding: 4px 6px;
+  padding: 3px 6px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   overflow: hidden;
   z-index: 2;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
+
+/* cor por situação do agendamento */
+.day-event--realizado { background-color: #d6eaf8; border-left-color: #3498db; }
+.day-event--faltou    { background-color: #fdebd0; border-left-color: #e67e22; }
+.day-event--cancelado { background-color: #eeeeee; border-left-color: #999; }
+.day-event--cancelado .day-event-title { text-decoration: line-through; color: #777; }
 
 .day-event-info {
   flex: 1;
@@ -227,9 +150,18 @@ const GRID_CSS = `
   text-overflow: ellipsis;
 }
 
+.day-event-sub {
+  font-size: 11px;
+  color: #3d6b52;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .day-event-notes {
   font-size: 11px;
   color: #3d6b52;
+  font-style: italic;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -238,16 +170,19 @@ const GRID_CSS = `
 .day-event-actions {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-content: flex-start;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
+  width: 84px;
 }
 
 .icon-btn.icon-btn-sm {
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
 }
 
 .day-out-of-grid {
@@ -283,11 +218,6 @@ const GRID_CSS = `
 }
 `;
 
-function formatDateToBR(isoDate) {
-  const [year, month, day] = isoDate.split("-");
-  return `${day}/${month}/${year}`;
-}
-
 function pad(n) {
   return String(n).padStart(2, "0");
 }
@@ -297,6 +227,12 @@ function toMinutes(time) {
   const [h, m] = time.split(":").map(Number);
   if (Number.isNaN(h) || Number.isNaN(m)) return null;
   return h * 60 + m;
+}
+
+// Duração visual (respeita a altura mínima do bloco)
+function visualMinutes(appointment) {
+  const duration = Number(appointment.duration) || DEFAULT_DURATION;
+  return Math.max(duration, MIN_EVENT_MINUTES);
 }
 
 // Distribui agendamentos que se sobrepõem em colunas lado a lado
@@ -326,8 +262,9 @@ function layoutEvents(items) {
       colEnds.push(0);
     }
 
-    colEnds[col] = item.startMin + EVENT_MINUTES;
-    clusterEnd = Math.max(clusterEnd, item.startMin + EVENT_MINUTES);
+    const end = item.startMin + item.visualMin;
+    colEnds[col] = end;
+    clusterEnd = Math.max(clusterEnd, end);
     cluster.push({ ...item, col });
   });
 
@@ -336,64 +273,91 @@ function layoutEvents(items) {
   return result;
 }
 
+const iconProps = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 14,
+  height: 14,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+};
+
 const CommentsIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg {...iconProps}>
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
   </svg>
 );
 
 const EditIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg {...iconProps}>
     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
   </svg>
 );
 
 const DeleteIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg {...iconProps}>
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
-function EventActions({ appointment, onViewComments, onEdit, onDelete }) {
+const CheckIcon = () => (
+  <svg {...iconProps}>
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const RecordIcon = () => (
+  <svg {...iconProps}>
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+  </svg>
+);
+
+function EventActions({
+  appointment,
+  onViewComments,
+  onEdit,
+  onDelete,
+  onRegister,
+  onOpenRecord,
+}) {
+  const status = appointment.status || "agendado";
+  const canRegister = status === "agendado" || status === "faltou";
+
   return (
     <div className="day-event-actions">
+      {canRegister && (
+        <button
+          type="button"
+          className="icon-btn icon-btn-sm icon-btn-done"
+          onClick={() => onRegister(appointment)}
+          aria-label="Registrar atendimento"
+          title="Registrar atendimento (prontuário)"
+        >
+          <CheckIcon />
+        </button>
+      )}
+      <button
+        type="button"
+        className="icon-btn icon-btn-sm icon-btn-record"
+        onClick={() => onOpenRecord(appointment)}
+        aria-label="Abrir prontuário"
+        title="Abrir prontuário"
+      >
+        <RecordIcon />
+      </button>
       <button
         type="button"
         className="icon-btn icon-btn-sm icon-btn-comments"
         onClick={() => onViewComments(appointment)}
-        aria-label="Ver observações do cliente"
-        title="Observações do cliente"
+        aria-label="Ver observações do paciente"
+        title="Observações do paciente"
       >
         <CommentsIcon />
       </button>
@@ -429,6 +393,8 @@ export default function DayAppointmentsModal({
   onDelete,
   onCreate,
   onViewComments,
+  onRegister,
+  onOpenRecord,
 }) {
   const scrollRef = useRef(null);
 
@@ -444,7 +410,11 @@ export default function DayAppointmentsModal({
     if (startMin === null || startMin < gridStartMin || startMin >= gridEndMin) {
       outOfGrid.push(a);
     } else {
-      inGrid.push({ appointment: a, startMin });
+      inGrid.push({
+        appointment: a,
+        startMin,
+        visualMin: visualMinutes(a),
+      });
     }
   });
 
@@ -468,19 +438,27 @@ export default function DayAppointmentsModal({
 
   if (!isOpen) return null;
 
+  const actionProps = {
+    onViewComments,
+    onEdit,
+    onDelete,
+    onRegister,
+    onOpenRecord,
+  };
+
   return (
     <div className="modal-overlay">
       <style>{GRID_CSS}</style>
 
       <div className="modal-content modal-day">
         <div className="day-modal-header">
-          <h3>Agendamentos do dia {date ? formatDateToBR(date) : ""}</h3>
+          <h3>Agenda do dia {date ? formatDateBR(date) : ""}</h3>
           <button
             type="button"
             className="btn-primary"
             onClick={() => onCreate("")}
           >
-            + Novo agendamento
+            + Nova sessão
           </button>
         </div>
 
@@ -511,40 +489,51 @@ export default function DayAppointmentsModal({
             ))}
 
             <div className="day-grid-events">
-              {positioned.map(({ appointment, startMin, col, cols }) => {
-                const top = ((startMin - gridStartMin) * HOUR_HEIGHT) / 60;
-                const height = (EVENT_MINUTES * HOUR_HEIGHT) / 60;
-                const widthPct = 100 / cols;
+              {positioned.map(
+                ({ appointment, startMin, visualMin, col, cols }) => {
+                  const top = ((startMin - gridStartMin) * HOUR_HEIGHT) / 60;
+                  const height = (visualMin * HOUR_HEIGHT) / 60;
+                  const widthPct = 100 / cols;
+                  const status = appointment.status || "agendado";
+                  const sub = [
+                    appointment.location,
+                    APPOINTMENT_STATUS[status],
+                  ]
+                    .filter(Boolean)
+                    .join(" · ");
 
-                return (
-                  <div
-                    key={appointment.id}
-                    className="day-event"
-                    style={{
-                      top,
-                      height,
-                      left: `${col * widthPct}%`,
-                      width: `calc(${widthPct}% - 3px)`,
-                    }}
-                  >
-                    <div className="day-event-info">
-                      <div className="day-event-title">
-                        {appointment.time} - {getClientName(appointment.clientId)}
+                  return (
+                    <div
+                      key={appointment.id}
+                      className={`day-event day-event--${status}`}
+                      style={{
+                        top,
+                        height,
+                        left: `${col * widthPct}%`,
+                        width: `calc(${widthPct}% - 3px)`,
+                      }}
+                    >
+                      <div className="day-event-info">
+                        <div className="day-event-title">
+                          {appointment.time} -{" "}
+                          {getClientName(appointment.clientId)}
+                        </div>
+                        <div className="day-event-sub">{sub}</div>
+                        {appointment.notes && (
+                          <div className="day-event-notes">
+                            {appointment.notes}
+                          </div>
+                        )}
                       </div>
-                      {appointment.notes && (
-                        <div className="day-event-notes">{appointment.notes}</div>
-                      )}
-                    </div>
 
-                    <EventActions
-                      appointment={appointment}
-                      onViewComments={onViewComments}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                    />
-                  </div>
-                );
-              })}
+                      <EventActions
+                        appointment={appointment}
+                        {...actionProps}
+                      />
+                    </div>
+                  );
+                }
+              )}
             </div>
           </div>
         </div>
@@ -560,12 +549,7 @@ export default function DayAppointmentsModal({
                     {getClientName(appointment.clientId)}
                     {appointment.notes ? ` - ${appointment.notes}` : ""}
                   </span>
-                  <EventActions
-                    appointment={appointment}
-                    onViewComments={onViewComments}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                  />
+                  <EventActions appointment={appointment} {...actionProps} />
                 </li>
               ))}
             </ul>
