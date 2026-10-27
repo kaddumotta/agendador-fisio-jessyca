@@ -15,6 +15,7 @@ import {
 import ClientModal from "../components/ClientModal";
 import ClientCommentsModal from "../components/ClientCommentsModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import PageHeader from "../components/PageHeader";
 import {
   formatBRL,
   normalizeText,
@@ -262,10 +263,10 @@ export default function ClientRegister() {
       : "Nenhum paciente cadastrado.";
 
   return (
-    <div>
-      <div className="clients-toolbar">
-        <h2>Pacientes</h2>
+    <div className="themed">
+      <PageHeader title="LISTA DE PACIENTES E PRONTUÁRIOS" />
 
+      <div className="clients-toolbar">
         <div className="clients-actions">
           <input
             type="search"

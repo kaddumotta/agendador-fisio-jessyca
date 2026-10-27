@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { PROFESSIONAL } from "../utils/physioUtils";
+import PageHeader from "../components/PageHeader";
 
 function formatDateToBR(isoDate) {
   const [year, month, day] = isoDate.split("-");
@@ -64,7 +65,7 @@ export default function TomorrowReminders() {
         : "";
 
     const message =
-      `Olá ${firstName}, tudo bem? Aqui é da equipe da ${professionalShortName}. ` +
+      `Olá ${firstName}, tudo bem? Aqui é a ${professionalShortName}. ` +
       `Passando para confirmar sua sessão de fisioterapia amanhã (${dateStringBR}) ` +
       `às ${appointment.time}${where}. Posso confirmar seu horário?`;
 
@@ -74,8 +75,10 @@ export default function TomorrowReminders() {
   };
 
   return (
-    <div>
-      <h2>Sessões de amanhã ({dateStringBR})</h2>
+    <div className="themed">
+      <PageHeader title="AVISOS" />
+
+      <h3 className="page-band">Sessões de amanhã ({dateStringBR})</h3>
 
       {appointments.length === 0 && <p>Nenhuma sessão para confirmar amanhã.</p>}
 

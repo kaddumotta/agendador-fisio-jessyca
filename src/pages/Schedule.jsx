@@ -30,6 +30,7 @@ import DayAppointmentsModal from "../components/DayAppointmentsModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import ClientCommentsModal from "../components/ClientCommentsModal";
 import RecordModal from "../components/RecordModal";
+import PageHeader from "../components/PageHeader";
 
 export default function Schedule() {
   const today = new Date();
@@ -312,8 +313,16 @@ export default function Schedule() {
 
   const days = getMonthDays(currentYear, currentMonth);
 
+  const todayString = formatDateString(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
   return (
-    <div>
+    <div className="themed agenda">
+      <PageHeader title="AGENDA DE HORÁRIOS" />
+
       <div className="calendar-header">
         <button onClick={handlePrevMonth}>{"< Anterior"}</button>
         <h2>
@@ -346,7 +355,9 @@ export default function Schedule() {
           return (
             <div
               key={dateString}
-              className="calendar-day"
+              className={`calendar-day ${
+                dateString === todayString ? "today" : ""
+              } ${activeCount > 0 ? "has-events" : ""}`}
               onClick={() => handleDayClick(day)}
             >
               <span className="day-number">{day}</span>

@@ -5,10 +5,10 @@ import { collection, getDocs } from "firebase/firestore";
 import { monthNames } from "../utils/calendarUtils";
 import {
   LOCATIONS,
-  PROFESSIONAL,
   formatBRL,
   openBySession,
 } from "../utils/physioUtils";
+import PageHeader from "../components/PageHeader";
 import "../dashboard.css";
 
 // Paleta validada (roxo da marca + verde-água para "em aberto")
@@ -523,12 +523,7 @@ export default function Dashboard() {
 
   return (
     <div className="dash">
-      <header className="dash-title">
-        <h2>ATENDIMENTOS FISIOTERAPIA</h2>
-        <small>
-          {PROFESSIONAL.name} · {PROFESSIONAL.crefito}
-        </small>
-      </header>
+      <PageHeader title="ATENDIMENTOS FISIOTERAPIA" />
 
       <div className="filter-bar dash-filters">
         <label className="field">

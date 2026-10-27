@@ -16,6 +16,7 @@ import {
 } from "firebase/firestore";
 import RecordModal from "../components/RecordModal";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import PageHeader from "../components/PageHeader";
 import {
   CLINICAL_FIELDS,
   PROFESSIONAL,
@@ -210,7 +211,12 @@ export default function PatientRecord() {
   };
 
   return (
-    <div className="printable">
+    <div className="themed printable">
+      <PageHeader
+        title="LISTA DE PACIENTES E PRONTUÁRIOS"
+        className="no-print"
+      />
+
       {/* Cabeçalho que aparece só na impressão */}
       <div className="print-only print-header">
         <strong>{PROFESSIONAL.name}</strong>

@@ -8,21 +8,6 @@
   --dash-muted: #6b7280;
 }
 
-.dash-title {
-  text-align: center;
-  margin-bottom: 12px;
-}
-
-.dash-title h2 {
-  margin: 0;
-  color: var(--dash-main);
-  letter-spacing: 1px;
-}
-
-.dash-title small {
-  color: var(--dash-muted);
-}
-
 .dash-filters {
   background: var(--dash-soft);
   border-radius: 8px;
@@ -256,15 +241,6 @@
 /* ===== Mobile ===== */
 
 @media (max-width: 600px) {
-  .dash-title h2 {
-    font-size: 17px;
-    letter-spacing: 0;
-  }
-
-  .dash-title small {
-    font-size: 11px;
-  }
-
   .dash-filters {
     padding: 8px;
     gap: 8px;
@@ -384,14 +360,6 @@
 /* ===== Compacto no computador (telas acima de 600px) ===== */
 
 @media (min-width: 601px) {
-  .dash-title h2 {
-    font-size: 20px;
-  }
-
-  .dash-title small {
-    font-size: 12px;
-  }
-
   .dash-filters {
     padding: 6px 10px;
     margin-bottom: 10px;

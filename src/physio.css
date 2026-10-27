@@ -552,3 +552,240 @@
     font-size: 12px;
   }
 }
+/* ===== Cabeçalho das páginas (logo + título + imagem) ===== */
+
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.page-title h2 {
+  margin: 0;
+  color: #6d28d9;
+  letter-spacing: 1px;
+}
+
+.page-title small {
+  color: #6b7280;
+}
+
+.page-title-logo {
+  max-height: 70px;
+  max-width: 22%;
+  object-fit: contain;
+}
+
+.page-title-art {
+  max-height: 90px;
+  max-width: 18%;
+  object-fit: contain;
+}
+
+@media (min-width: 601px) {
+  .page-title h2 {
+    font-size: 20px;
+  }
+
+  .page-title small {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-title {
+    gap: 8px;
+  }
+
+  .page-title h2 {
+    font-size: 15px;
+  }
+
+  .page-title small {
+    font-size: 11px;
+  }
+
+  .page-title-logo {
+    max-height: 38px;
+  }
+
+  .page-title-art {
+    max-height: 54px;
+  }
+}
+
+/* ===== Tema roxo (mesma identidade do painel) ===== */
+
+.themed {
+  --theme-main: #6d28d9;
+  --theme-tile: #7c3aed;
+  --theme-hover: #5b21b6;
+  --theme-soft: #ede9fe;
+  --theme-softer: #f6f3ff;
+  --theme-line: #d9d2f5;
+}
+
+.themed .btn-primary {
+  background-color: var(--theme-tile);
+  color: #fff;
+}
+
+.themed .btn-primary:hover {
+  background-color: var(--theme-hover);
+}
+
+.themed .btn-secondary {
+  background-color: var(--theme-soft);
+  color: var(--theme-main);
+}
+
+.themed .btn-secondary:hover {
+  background-color: var(--theme-line);
+}
+
+.themed .page-band {
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  background: var(--theme-tile);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 1px;
+  border-radius: 6px;
+}
+
+.themed > h3,
+.themed > div > h3,
+.themed .section-title h3 {
+  color: var(--theme-main);
+  border-bottom: 2px solid var(--theme-line);
+  padding-bottom: 4px;
+}
+
+.themed > ul > li {
+  border-bottom-color: var(--theme-line);
+}
+
+.themed > ul > li:hover {
+  background-color: var(--theme-softer);
+}
+
+.themed .filter-bar {
+  background: var(--theme-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.themed .summary-card {
+  background: var(--theme-softer);
+  border-color: var(--theme-line);
+}
+
+.themed .summary-card strong {
+  color: var(--theme-main);
+}
+
+.themed .summary-card-alert {
+  background: #fdecea;
+  border-color: #f5b7b1;
+}
+
+.themed .summary-card-alert strong {
+  color: #c0392b;
+}
+
+.themed .data-table th {
+  color: var(--theme-main);
+  background: var(--theme-soft);
+}
+
+.themed .data-table td {
+  border-bottom-color: var(--theme-line);
+}
+
+.themed .data-table tr.clickable:hover {
+  background: var(--theme-softer);
+}
+
+.themed .record-card {
+  border-color: var(--theme-line);
+}
+
+.themed .record-patient h2 {
+  color: var(--theme-main);
+}
+
+/* Pacientes: a barra de busca fica abaixo do cabeçalho */
+.themed .clients-toolbar {
+  margin-top: 0;
+  padding-top: 10px;
+  border-bottom-color: var(--theme-line);
+}
+
+/* ===== Agenda ===== */
+
+.agenda .calendar-header {
+  background: var(--theme-soft);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.agenda .calendar-header h2 {
+  margin: 0;
+  color: var(--theme-main);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.agenda .calendar-header button {
+  background-color: var(--theme-tile);
+  color: #fff;
+}
+
+.agenda .calendar-header button:hover {
+  background-color: var(--theme-hover);
+}
+
+.agenda .calendar-weekday {
+  background: var(--theme-tile);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.agenda .calendar-day {
+  background-color: #fff;
+  border-color: var(--theme-line);
+  border-radius: 8px;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.agenda .calendar-day:hover {
+  background-color: var(--theme-soft);
+  border-color: var(--theme-tile);
+}
+
+.agenda .calendar-day.has-events {
+  background-color: var(--theme-softer);
+}
+
+.agenda .calendar-day.today {
+  border: 2px solid var(--theme-main);
+}
+
+.agenda .calendar-day.today .day-number {
+  color: var(--theme-main);
+}
+
+.agenda .calendar-day.empty {
+  background-color: transparent;
+  border: none;
+}
+
+.agenda .day-badge {
+  background-color: var(--theme-tile);
+}

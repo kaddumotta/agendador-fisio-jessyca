@@ -1,5 +1,5 @@
 // src/App.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import Navbar from "./components/Navbar";
@@ -27,6 +27,15 @@ export default function App() {
 
                 <Route
                   path="/"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/agenda"
                   element={
                     <PrivateRoute>
                       <Schedule />
@@ -61,14 +70,7 @@ export default function App() {
                   }
                 />
 
-                <Route
-                  path="/dashboard"
-                  element={
-                    <PrivateRoute>
-                      <Dashboard />
-                    </PrivateRoute>
-                  }
-                />
+                <Route path="/dashboard" element={<Navigate to="/" replace />} />
 
                 <Route
                   path="/avisos"

@@ -5,6 +5,7 @@ import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import { monthNames } from "../utils/calendarUtils";
 import { formatBRL, openBySession } from "../utils/physioUtils";
+import PageHeader from "../components/PageHeader";
 
 const pad = (n) => String(n).padStart(2, "0");
 
@@ -185,8 +186,8 @@ export default function Finance() {
   if (loading) return <p>Carregando financeiro...</p>;
 
   return (
-    <div>
-      <h2>Financeiro</h2>
+    <div className="themed">
+      <PageHeader title="FINANCEIRO" />
 
       <div className="filter-bar">
         <label className="field">
